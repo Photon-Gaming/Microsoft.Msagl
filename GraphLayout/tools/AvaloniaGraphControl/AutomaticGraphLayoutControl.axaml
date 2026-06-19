@@ -1,0 +1,5 @@
+﻿<ScrollViewer x:Class="Microsoft.Msagl.AvaloniaGraphControl.AutomaticGraphLayoutControl"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DockPanel x:Name="dockPanel"/>
+</ScrollViewer>

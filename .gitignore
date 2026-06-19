@@ -163,3 +163,6 @@ $RECYCLE.BIN/
 /sh.exe.stackdump
 /node_modules
 /package-lock.json
+
+# JetBrains Rider
+.idea/
