@@ -134,6 +134,9 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
             //LargeGraphNodeCountThreshold = 0;
             layoutEditor = new LayoutEditor(this);
 
+            _graphCanvas.RenderTransformOrigin = RelativePoint.TopLeft;
+            _graphCanvas.RenderTransform = new MatrixTransform();
+
             _graphCanvas.SizeChanged += GraphCanvasSizeChanged;
             _graphCanvas.PointerPressed += GraphCanvasPointerPressed;
             _graphCanvas.PointerMoved += GraphCanvasPointerMoved;
@@ -319,7 +322,7 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
             if (e.Handled) return;
 
 
-            if (e.Properties.IsLeftButtonPressed && (!LayoutEditingEnabled || _objectUnderMouseCursor == null)) {
+            if (e.Properties.IsMiddleButtonPressed && (!LayoutEditingEnabled || _objectUnderMouseCursor == null)) {
                 if (!_mouseDownPositionInGraph_initialized) {
                     _mouseDownPositionInGraph = Common.MsaglPoint(e.GetPosition(_graphCanvas));
                     _mouseDownPositionInGraph_initialized = true;
@@ -467,11 +470,11 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
         }
 
         protected double CurrentXOffset {
-            get { return ((MatrixTransform)_graphCanvas.RenderTransform).Matrix.Transform(new AvaloniaPoint()).X; }
+            get { return ((MatrixTransform)_graphCanvas.RenderTransform).Matrix.M31; }
         }
 
         protected double CurrentYOffset {
-            get { return ((MatrixTransform)_graphCanvas.RenderTransform).Matrix.Transform(new AvaloniaPoint()).Y; }
+            get { return ((MatrixTransform)_graphCanvas.RenderTransform).Matrix.M32; }
         }
 
         /// <summary>
@@ -556,12 +559,10 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
         }
 
         static void GetDpi() {
-            int hdcSrc = NativeMethods.GetWindowDC(NativeMethods.GetDesktopWindow());
-            //LOGPIXELSX = 88,
-            //LOGPIXELSY = 90,
-            _dpiX = NativeMethods.GetDeviceCaps(hdcSrc, 88);
-            _dpiY = NativeMethods.GetDeviceCaps(hdcSrc, 90);
-            NativeMethods.ReleaseDC(NativeMethods.GetDesktopWindow(), hdcSrc);
+            // This required platform-specific native calls, so has been removed to make project cross-platform.
+            // May need changing in future if there are issues on different display scales.
+            _dpiX = 96;
+            _dpiY = 96;
         }
 
         public double DpiX {
@@ -752,8 +753,6 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
             _backgroundWorker = null; //this will signal that we are not under layout anymore
             if (GraphChanged != null)
                 GraphChanged(this, null);
-
-            SetInitialTransform();
         }
 
         /// <summary>
@@ -1542,7 +1541,7 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
                 if (mt == null)
                     return PlaneTransformation.UnitTransformation;
                 var m = mt.Matrix;
-                return new PlaneTransformation(m.M11, m.M12, m.Transform(new AvaloniaPoint()).X, m.M21, m.M22, m.Transform(new AvaloniaPoint()).Y);
+                return new PlaneTransformation(m.M11, m.M12, m.M31, m.M21, m.M22, m.M32);
             }
             set {
                 SetRenderTransformWithoutRaisingEvents(value);
