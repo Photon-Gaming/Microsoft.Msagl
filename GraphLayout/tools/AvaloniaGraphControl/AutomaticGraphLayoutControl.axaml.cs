@@ -1,14 +1,26 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
 using Avalonia.Controls;
 using Microsoft.Msagl.Drawing;
 
 namespace Microsoft.Msagl.AvaloniaGraphControl {
-    public partial class AutomaticGraphLayoutControl : ScrollViewer {
+    public partial class AutomaticGraphLayoutControl : ScrollViewer, IDisposable {
         GraphViewer _graphViewer;
         public AutomaticGraphLayoutControl() {
             InitializeComponent();
             Loaded += (s, e) => SetGraph();
         }
+
+        ~AutomaticGraphLayoutControl() {
+            Dispose();
+        }
+
+        public void Dispose() {
+            _graphViewer.Dispose();
+
+            GC.SuppressFinalize(this);
+        }
+
         public Graph Graph {
             get => GetValue(GraphProperty);
             set => SetValue(GraphProperty, value);

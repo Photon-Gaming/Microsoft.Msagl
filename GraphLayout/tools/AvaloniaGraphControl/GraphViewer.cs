@@ -61,7 +61,7 @@ using Edge = Microsoft.Msagl.Core.Layout.Edge;
 
 
 namespace Microsoft.Msagl.AvaloniaGraphControl {
-    public class GraphViewer : IViewer {
+    public class GraphViewer : IViewer, IDisposable {
         Path _targetArrowheadPathForRubberEdge;
 
         Path _rubberEdgePath;
@@ -76,7 +76,6 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
         Ellipse _sourcePortCircle;
         protected Ellipse TargetPortCircle { get; set; }
 
-        AvaloniaPoint _objectUnderMouseDetectionLocation;
         public event EventHandler LayoutStarted;
         public event EventHandler LayoutComplete;
 
@@ -151,6 +150,16 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
             LayoutEditingEnabled = true;
             clickCounter = new ClickCounter(() => lastKnownMousePos);
             clickCounter.Elapsed += ClickCounterElapsed;
+        }
+
+        ~GraphViewer() {
+            Dispose();
+        }
+
+        public void Dispose() {
+            _backgroundWorker.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
 
