@@ -15,7 +15,7 @@ namespace Microsoft.Msagl.Drawing {
     /// <summary>
     /// reads a drawing graph from a stream
     /// </summary>
-    public class GraphReader {
+    public class GraphReader : IDisposable {
         /// <summary>
         /// the list of edges, needed to match it with GeometryGraphReader edges
         /// </summary>
@@ -33,7 +33,17 @@ namespace Microsoft.Msagl.Drawing {
             readerSettings.IgnoreComments = true;
             xmlReader = XmlReader.Create(stream, readerSettings);
         }
-        
+
+        ~GraphReader() {
+            Dispose();
+        }
+
+        public void Dispose() {
+            geometryGraphReader.Dispose();
+
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Reads the graph from a file
         /// </summary>
@@ -81,8 +91,8 @@ namespace Microsoft.Msagl.Drawing {
                         break;
                 }
             } while (!done);
-          
-                     
+
+
         }
 
         void FleshOutSubgraphs() {
@@ -102,7 +112,7 @@ namespace Microsoft.Msagl.Drawing {
 
             if (rootSubgraphSet.Count == 1)
                 graph.RootSubgraph = rootSubgraphSet.First();
-            else 
+            else
                 foreach (var subgraph in rootSubgraphSet)
                     graph.RootSubgraph.AddSubgraph(subgraph);
         }
@@ -114,7 +124,7 @@ namespace Microsoft.Msagl.Drawing {
 
             if (!xmlReader.IsStartElement())
                 ReadEndElement();
-            
+
         }
 
         void ReadSubgraph() {
@@ -173,7 +183,7 @@ namespace Microsoft.Msagl.Drawing {
                 var node = parent as Node;
                 if (node != null){//we still need a label!
                     Label label = new Label {
-                        Text = node.Id,                       
+                        Text = node.Id,
                         Owner = parent
                     };
                     ((ILabeledObject) parent).Label = label;
@@ -213,7 +223,7 @@ namespace Microsoft.Msagl.Drawing {
                     geomEdge.Label.UserData = drawingEdge.Label;
                 }
             }
-                
+
             drawingGraph.LayoutAlgorithmSettings = settings;
         }
 
@@ -238,7 +248,7 @@ namespace Microsoft.Msagl.Drawing {
             if (TokenIs(Tokens.UserData))
                 userData = ReadUserData();
             Edge edge=graph.AddEdge(ReadStringElement(Tokens.SourceNodeID), ReadStringElement(Tokens.TargetNodeID));
-            
+
             edge.Attr = new EdgeAttr();
             edge.UserData = userData;
             ReadEdgeAttr(edge.Attr);
@@ -342,7 +352,7 @@ namespace Microsoft.Msagl.Drawing {
         }
 
         private void ReadNodeAttr(NodeAttr na) {
-            CheckToken(Tokens.NodeAttribute); 
+            CheckToken(Tokens.NodeAttribute);
             XmlRead();
             ReadBaseAttr(na);
             na.FillColor = ReadColorElement(Tokens.Fillcolor);
@@ -352,7 +362,7 @@ namespace Microsoft.Msagl.Drawing {
             na.XRadius=ReadDoubleElement(Tokens.XRad);
             na.YRadius=ReadDoubleElement(Tokens.YRad);
             ReadEndElement();
-       
+
         }
 
         private void ReadBaseAttr(AttributeBase baseAttr) {
@@ -384,7 +394,7 @@ namespace Microsoft.Msagl.Drawing {
         private string ReadElementContentAsString() {
             return xmlReader.ReadElementContentAsString();
         }
-        
+
         private void CheckToken(Tokens t) {
             if (!xmlReader.IsStartElement(t.ToString())) {
                 throw new InvalidDataException(String.Format("expecting {0}", t));
@@ -458,7 +468,7 @@ namespace Microsoft.Msagl.Drawing {
             return Convert.ToBoolean(xmlReader.ReadElementContentAsString());
         }
 
-     
+
         private double ReadElementContentAsDouble() {
             return xmlReader.ReadElementContentAsDouble();
         }

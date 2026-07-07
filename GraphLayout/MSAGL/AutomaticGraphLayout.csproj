@@ -12,13 +12,12 @@
   <ItemGroup>
     <None Include="AutomaticGraphLayout.nuspec" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-     <PackageReference Include="System.Text.Json" Version="4.7.2" />
-	  
+
   </ItemGroup>
 </Project>
