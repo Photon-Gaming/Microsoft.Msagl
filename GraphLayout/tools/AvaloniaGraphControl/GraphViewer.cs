@@ -162,6 +162,10 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
         /// <param name="panel"></param>
         public void BindToPanel(Panel panel) {
             panel.Children.Add(GraphCanvas);
+            panel.PointerMoved += GraphCanvasPointerMoved;
+            panel.PointerPressed += GraphCanvasPointerPressed;
+            panel.PointerReleased += GraphCanvasPointerReleased;
+            panel.PointerWheelChanged += GraphCanvasPointerWheel;
             GraphCanvas.UpdateLayout();
         }
 
@@ -291,9 +295,12 @@ namespace Microsoft.Msagl.AvaloniaGraphControl {
         /// <param name="zoomFactor"></param>
         /// <param name="centerOfZoom"></param>
         public void ZoomAbout(double zoomFactor, AvaloniaPoint centerOfZoom) {
+            if (_graphCanvas.Parent is not Visual parentVisual) {
+                return;
+            }
             var scale = zoomFactor * FitFactor;
             var centerOfZoomOnScreen =
-                _graphCanvas.Bounds.TopLeft + centerOfZoom;
+                _graphCanvas.TransformToVisual(parentVisual)?.Transform(centerOfZoom) ?? new AvaloniaPoint();
             SetTransform(scale, centerOfZoomOnScreen.X - centerOfZoom.X * scale,
                          centerOfZoomOnScreen.Y + centerOfZoom.Y * scale);
         }
