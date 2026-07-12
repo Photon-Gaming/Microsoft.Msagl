@@ -8,6 +8,7 @@
     <IsPackable>true</IsPackable>
     <NoWarn>1591, 1573</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableSourceLink>false</EnableSourceLink>
   </PropertyGroup>
 
   <ItemGroup>

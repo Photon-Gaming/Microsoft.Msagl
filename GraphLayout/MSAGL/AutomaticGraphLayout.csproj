@@ -8,6 +8,7 @@
     <IsPackable>true</IsPackable>
     <NoWarn>NU1605,CS1591,CS1570,CS1572, CS1587, CS1572, CS1573, CS1712</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableSourceLink>false</EnableSourceLink>
   </PropertyGroup>
   <ItemGroup>
     <None Include="AutomaticGraphLayout.nuspec" />
